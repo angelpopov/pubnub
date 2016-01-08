@@ -9,5 +9,7 @@
                #:jsown
 	       #:do-urlencode)
   :components ((:file "package")
-               (:file "cl-pubnub")))
+	       (:file "keys")
+	       (:file "urls")
+               (:file "cl-pubnub") ))
 
