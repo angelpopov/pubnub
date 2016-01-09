@@ -39,8 +39,8 @@
 	  ;;(do-urlencode:urlencode "{'count':1}") TBA - result: not-found?!
 	  ))
 
-(defun here-now-url ()
-  (list "v2" "presence" "sub_key" +sub-key+) ;; TBA - should we restrict to max 100 items?
+(defun here-now-url (&key (sub-key +sub-key+))
+  (list "v2" "presence" "sub_key" sub-key) ;; TBA - should we restrict to max 100 items?
   )
 
 (defun where-now-url (uuid)
@@ -97,7 +97,7 @@
 
 (defun subscribe-url(channel timetoken)
   (list "subscribe" +sub-key+
-	  channel
+	  (do-urlencode:urlencode (format nil "~A" channel))
 	  0 ;; callback
 	  timetoken))
 

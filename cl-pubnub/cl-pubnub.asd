@@ -7,6 +7,7 @@
   :license "Apache 2"
   :depends-on (#:drakma
                #:jsown
+	       #:split-sequence
 	       #:do-urlencode)
   :components ((:file "package")
 	       (:file "keys")
