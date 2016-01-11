@@ -1,5 +1,5 @@
 (in-package #:cl-pubnub)
 (eval-when (:load-toplevel)
-	   (defconstant +pub-key+ "demo")
-	   (defconstant +sub-key+ "demo")
+	   (defconstant +pub-key+ "pub-c-0ffbb83a-b74a-4a3c-be08-d40532fce60f")
+	   (defconstant +sub-key+ "sub-c-783927a0-a48c-11e5-9196-02ee2ddab7fe")
 	   )

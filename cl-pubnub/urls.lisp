@@ -40,8 +40,7 @@
 	  ))
 
 (defun here-now-url (&key (sub-key +sub-key+))
-  (list "v2" "presence" "sub_key" sub-key) ;; TBA - should we restrict to max 100 items?
-  )
+  (list "v2" "presence" "sub_key" sub-key))
 
 (defun where-now-url (uuid)
   (list "v2" "presence" "sub_key" +sub-key+ "uuid" uuid))

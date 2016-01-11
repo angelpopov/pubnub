@@ -3,39 +3,37 @@
 (use-package :split-sequence)
 (eval-when (:load-toplevel)
   (defconstant +host+ "http://pubsub.pubnub.com"))
+(defun to-url(list)
+  (format nil "~{~A~^/~}" (list* +host+ list)) )
 
-(defun pubnub (url)
+(defun pubnub (list)
   (jsown:parse
-   (print(drakma:http-request
-     (format nil "~{~A~^/~}"
-	     (list* +host+ url))))))
+   (print
+    (drakma:http-request
+     (print (to-url list)) ))))
 
 (defclass pubnub-client ()
   ((time
     :initarg  :time
     :initform 0
-    :reader   pn-time
-    :writer (setf pn-time))
+    :accessor pn-time)
    (items
     :initarg  :items
     :initform '()
-    :reader   pn-items
-    :writer (setf pn-items)))
+    :accessor pn-items))
   (:documentation "Representation of a pubnub client."))
-
-
 
 (defgeneric channels(client)
   (:documentation "List of available channels"))
 
 (defmethod channels ((pn pubnub-client))
-  (sort (jsown:keywords (pn-items pn)) #'> :key #'(lambda (i) (jsown:filter (pn-items pn) i "occupancy")) ) )
+  (sort (jsown:keywords (pn-items pn)) #'> :key #'(lambda (i) (jsown:filter (pn-items pn) i "occupancy"))))
 
 (defmethod channel ((pn pubnub-client) channel)
-  (jsown:val (pn-items pn) channel))
-
-
-
+  (with-slots (items)
+	      (if (member channel items :test #'equal) 
+		  (jsown:val items channel)
+		(format t "~A does not contain key ~A" items))))
 
 (defvar *client* (make-instance 'pubnub-client))
 
@@ -53,7 +51,7 @@
    (setf (pn-time *client*) now)))
 
 (defun errorp(item)
-  (member (jsown:keywords item) '("error") :test #'equal) )
+  (or (null item) (member (jsown:keywords item) '("error") :test #'equal)) )
 
 (defun here-now()
   (let((items (pubnub(here-now-url))))
@@ -97,11 +95,15 @@
 (defun watch-all ()
   "Shows activity on all channels"
   (here-now)
-  (loop :repeat 100 do
+  (loop do
 	(loop for (channel . message) in
 	      (subscribe :channel (format nil "~{~A~^,~}"(channels *client*))) do
-	      (format t "~&~A:~A~%" channel message)
-	      )))
+	      (format t "~&~A:~A~%" channel message))))
+
+(defun test-publish()
+  (loop for message from 1 to 10 do
+	(publish :channel (format nil "multi~A" message)
+		 :message message)))
 
 (defun test-publish()
   (loop for ch from 1 to 10 do
