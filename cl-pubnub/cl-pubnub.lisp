@@ -1,16 +1,14 @@
 ;;;; cl-pubnub.lisp
 (in-package #:cl-pubnub)
-(use-package :split-sequence)
-(eval-when (:load-toplevel)
-  (defconstant +host+ "http://pubsub.pubnub.com"))
+(defvar +host+ "http://pubsub.pubnub.com")
+
 (defun to-url(list)
   (format nil "~{~A~^/~}" (list* +host+ list)) )
 
 (defun pubnub (list)
   (jsown:parse
-   (print
-    (drakma:http-request
-     (print (to-url list)) ))))
+   (drakma:http-request
+     (print (to-url list)) )))
 
 (defclass pubnub-client ()
   ((time
@@ -53,8 +51,8 @@
 (defun errorp(item)
   (or (null item) (member (jsown:keywords item) '("error") :test #'equal)) )
 
-(defun here-now()
-  (let((items (pubnub(here-now-url))))
+(defun here-now ()
+  (let((items (pubnub (here-now-url))))
     (if (errorp items)
 	(format t "~A~%" items)
       (setf (pn-items *client*)
@@ -87,10 +85,6 @@
 		       :auth auth
 		       :reverse reverse
 		       :include-token include-token)))
-
-(defun history (channel &optional (limit 100))
-  (pubnub (history-url channel)))
-
 
 (defun watch-all ()
   "Shows activity on all channels"

@@ -5,7 +5,7 @@
 (defun leave-url(channel uuid)
   (list "v2" "presence" "sub_key" +sub-key+
 	  "channel" (do-urlencode:urlencode channel)
-	  "leave" (do-urlencode:urlencode (format nil "{'uuid':~S,'auth':''}" uuid))))
+	  (format nil "leave?uuid=~A"uuid)))
 
 (defun leave-group-url(channel uuid)
   (list "v2" "presence" "sub_key" +sub-key+
@@ -21,16 +21,15 @@
 			    (auth "auth"))
 
   (list "v2" "history" "sub-key" +sub-key+ "channel"
-	(format nil "~A~A" (do-urlencode:urlencode channel)
-		(format nil "?~{~{~A=~A~}~^&~}"
+	(format nil "~A?~{~{~A=~A~}~^&~}"
+			(do-urlencode:urlencode channel)
 			(remove-if-not #'second
 				       `(("string_message_token"  ,string-message-token)
 					 ("include_token" ,include-token)
 					 ("reverse" ,reverse)
 					 ("count" ,count)
 					 ("start" ,start)
-					 ("end" ,end))))
-		) ))
+					 ("end" ,end)))) ))
 
 (defun replay-url(source-channel dest-channel)
   (list "v1" "replay" +pub-key+ +sub-key+
